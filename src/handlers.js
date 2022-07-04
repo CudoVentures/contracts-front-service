@@ -33,7 +33,7 @@ module.exports.getVerifyContractHandler = (dbConn) => {
             }));
         } catch (e) {
             console.error(`failed pushing source for verification: ${e}`);
-            res.sendStatus(500);
+            errorResponse(res, 500, e);
         }
     };
 }
@@ -104,7 +104,7 @@ module.exports.getListContractSchemasHandler = (dbConn) => {
 
         } catch (e) {
             console.error(`failed to get contract schema for address '${req.query.address}': ${e}`);
-            res.sendStatus(500);
+            errorResponse(res, 500, e);
         }
     }
 }
