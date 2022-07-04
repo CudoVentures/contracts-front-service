@@ -1,0 +1,21 @@
+{
+  "name": "contracts-front-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@openwar/mongodb-queue": "^3.0.0",
+    "body-parser": "^1.20.0",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "gridfs-stream": "^1.1.1",
+    "mongodb": "^4.7.0",
+    "mongoose": "^6.3.6",
+    "multer-gridfs-storage": "^5.0.2"
+  }
+}
