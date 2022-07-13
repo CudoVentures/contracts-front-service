@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const multer = require('multer');
 
 const config = require('./config');
@@ -10,6 +11,7 @@ const { getVerifyContractHandler, getParseContractHandler,
 config.verifyConfig();
 
 const app = express();
+app.use(cors());
 
 const LISTEN_PORT = process.env.PORT || 3000;
 

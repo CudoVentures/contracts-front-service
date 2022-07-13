@@ -93,9 +93,8 @@ module.exports.getListContractSchemasHandler = (dbConn) => {
                 }
 
                 sourcesSchemas['sources'].push({
-                    [res['_id']]: {
-                        'schemas': res['schemas'],
-                    },
+                    'id': res['_id'],
+                    'schemas': res['schemas'],
                 });
             }
 
