@@ -1,11 +1,11 @@
 version: '3.6'
 services:
-  cudos-contracts-parser-service:
+  cudos-contracts-front-service:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3333:3333"
     restart: always
     extra_hosts:
       - "host.docker.internal:host-gateway"

@@ -5,13 +5,20 @@ const { storeSource, downloadSchemaByID } = require('./db');
 
 module.exports.getVerifyContractHandler = (dbConn) => {
     return async (req, res) => {
+
+        const metadata = {
+            optimizer: req.body.optimizer,
+            address: req.body.address,
+            timestamp: getTimestamp(),
+            // TODO: Add username to mark ownership
+        };
+
+        if (req.body.crateName) {
+            metadata['crateName'] = req.body.crateName;
+        }
+
         try {
-            const sourceID = await storeSource(req.file.buffer, {
-                optimizer: req.body.optimizer,
-                address: req.body.address,
-                timestamp: getTimestamp(),
-                // TODO: Add username to mark ownership
-            });
+            const sourceID = await storeSource(req.file.buffer, metadata);
             
             const insertRes = await dbConn.verificationResultsCollection.insertOne({
                 '_id': sourceID,
@@ -41,10 +48,16 @@ module.exports.getVerifyContractHandler = (dbConn) => {
 module.exports.getParseContractHandler = (dbConn) => {
     return async (req, res) => {
         try {
-            const sourceID = await storeSource(req.file.buffer, {
+            let metadata = {
                 address: req.body.address,
                 // TODO: Add username to mark ownership
-            });
+            };
+
+            if (req.body.crateName) {
+                metadata['crateName'] = req.body.crateName;
+            }
+
+            const sourceID = await storeSource(req.file.buffer, metadata);
 
             const insertRes = await dbConn.parsingResultsCollection.insertOne({
                 '_id': sourceID,
