@@ -22,6 +22,7 @@ module.exports.getVerifyContractHandler = (dbConn) => {
             
             const insertRes = await dbConn.verificationResultsCollection.insertOne({
                 '_id': sourceID,
+                'address': req.body.address,
                 'verified': false,
                 'error': '',
             });
@@ -42,6 +43,47 @@ module.exports.getVerifyContractHandler = (dbConn) => {
             console.error(`failed pushing source for verification: ${e}`);
             errorResponse(res, 500, e);
         }
+    };
+}
+
+module.exports.getVerificationStatusHandler = (dbConn) => {
+    return async (req, res) => {
+        let dbQuery;
+
+        if ('id' in req.query) {
+            dbQuery = { _id: req.query.id };
+        } else if ('address' in req.query) {
+            dbQuery = { address: req.query.address };
+        }
+
+        if (!dbQuery) {
+            res.status(400).end();
+            return;
+        }
+
+        const cursor = await dbConn.verificationResultsCollection.find(dbQuery);
+        const entries = await cursor.toArray();
+        
+        if (entries.length == 0) {
+            res.status(404).end();
+            return;
+        }
+
+        const result = entries[0];
+
+        if ('error' in result && result['error']) {
+            res.statusCode = 200;
+            res.end(JSON.stringify({ error: result['error'] }));
+            return;
+        }
+
+        if ('verified' in result) {
+            res.statusCode = 200;
+            res.end(JSON.stringify({ verified: result['verified'] }));
+            return;
+        }
+
+        res.status(404).end();
     };
 }
 
@@ -83,6 +125,34 @@ module.exports.getParseContractHandler = (dbConn) => {
             errorResponse(res, 500, e);
         }
     }
+}
+
+module.exports.getParsingStatusHandler = (dbConn) => {
+    return async (req, res) => {
+        const cursor = await dbConn.parsingResultsCollection.find({ _id: req.query.id });
+        const entries = await cursor.toArray();
+        
+        if (entries.length == 0) {
+            res.status(404).end();
+            return;
+        }
+
+        const result = entries[0];
+
+        if ('error' in result && result['error']) {
+            res.statusCode = 200;
+            res.end(JSON.stringify({ error: result['error'] }));
+            return;
+        }
+
+        if ('parsed' in result) {
+            res.statusCode = 200;
+            res.end(JSON.stringify({ parsed: result['parsed'] }));
+            return;
+        }
+
+        res.status(404).end();
+    };
 }
 
 module.exports.getListContractSchemasHandler = (dbConn) => {
@@ -129,6 +199,7 @@ module.exports.getReturnSchemaHandler = (_) => {
             });
         } catch (e) {
             console.error(`failed to get schema by id '${req.query.id}': ${e}`);
+            errorResponse(res, 500, e);
         }
     }   
 }
