@@ -72,29 +72,46 @@ module.exports.getVerificationStatusHandler = (dbConn) => {
             return;
         }
 
-        const cursor = await dbConn.verificationResultsCollection.find(dbQuery);
-        const entries = await cursor.toArray();
+        let response = {};
+
+        let cursor = await dbConn.verificationResultsCollection.find(dbQuery);
+        let entries = await cursor.toArray();
         
         if (entries.length == 0) {
             res.status(404).end();
             return;
         }
 
-        const result = entries[0];
+        let result = entries[0];
 
         if ('error' in result && result['error']) {
-            res.statusCode = 200;
-            res.end(JSON.stringify({ error: result['error'] }));
-            return;
+            response['verificationError'] = result['error'];
         }
 
         if ('verified' in result) {
-            res.statusCode = 200;
-            res.end(JSON.stringify({ verified: result['verified'] }));
+            response['verificationError'] = result['verified'];
+        }
+
+        cursor = await dbConn.parsingResultsCollection.find({ _id: dbQuery });
+        entries = await cursor.toArray();
+        
+        if (entries.length == 0) {
+            res.status(404).end();
             return;
         }
 
-        res.status(404).end();
+        result = entries[0];
+
+        if ('error' in result && result['error']) {
+            response['parsingError'] = result['error'];
+        }
+
+        if ('parsed' in result) {
+            response['parsed'] = result['parsed'];
+        }
+
+        res.statusCode = 200;
+        res.end(JSON.stringify(response));
     };
 }
 
