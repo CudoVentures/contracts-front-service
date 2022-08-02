@@ -25,8 +25,8 @@ connectDB('contracts_scan', 'sources', 'schemas', 'verification_results', 'parsi
     app.post('/verify-contract', multer().single('source'), getVerifyContractHandler(dbConn));
     app.get('/verification-status', getVerificationStatusHandler(dbConn));
 
-    app.post('/parse-contract', multer().single('source'), getParseContractHandler(dbConn));
-    app.get('/parsing-status', getParsingStatusHandler(dbConn));
+    // app.post('/parse-contract', multer().single('source'), getParseContractHandler(dbConn));
+    // app.get('/parsing-status', getParsingStatusHandler(dbConn));
 
     app.get('/contract-schemas', getListContractSchemasHandler(dbConn));
     app.get('/schema', getReturnSchemaHandler(dbConn));

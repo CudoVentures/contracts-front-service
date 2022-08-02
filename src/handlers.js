@@ -20,17 +20,28 @@ module.exports.getVerifyContractHandler = (dbConn) => {
         try {
             const sourceID = await storeSource(req.file.buffer, metadata);
             
-            const insertRes = await dbConn.verificationResultsCollection.insertOne({
+            const verificationInsertRes = await dbConn.verificationResultsCollection.insertOne({
                 '_id': sourceID,
                 'address': req.body.address,
                 'verified': false,
                 'error': '',
             });
             
-            if (!insertRes.acknowledged) {
+            if (!verificationInsertRes.acknowledged) {
                 throw 'inserting verification result not acknowledged';
             }
             
+            const parsingInsertRes = await dbConn.parsingResultsCollection.insertOne({
+                '_id': sourceID,
+                'address': req.body.address,
+                'parsed': false,
+                'error': '',
+            });
+            
+            if (!parsingInsertRes.acknowledged) {
+                throw 'inserting parsing result not acknowledged';
+            }
+
             await dbConn.verificationQueue.add(sourceID);
             
             console.log(`Verification handler. Successfully queued source '${sourceID}' for address '${req.body.address}'`);
