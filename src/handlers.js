@@ -46,7 +46,7 @@ module.exports.getVerifyContractHandler = (dbConn) => {
             
             console.log(`Verification handler. Successfully queued source '${sourceID}' for address '${req.body.address}'`);
 
-            res.statusCode = 200;
+            res.statusCode = 201;
             res.end(JSON.stringify({
                 'id': sourceID,
             }));
@@ -144,7 +144,7 @@ module.exports.getParseContractHandler = (dbConn) => {
             
             console.log(`Parsing handler. Successfully queued source '${sourceID}' for address '${req.body.address}'`);
 
-            res.statusCode = 200;
+            res.statusCode = 201;
             res.end(JSON.stringify({
                 'id': sourceID,
             }));
