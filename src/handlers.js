@@ -74,7 +74,7 @@ module.exports.getVerificationStatusHandler = (dbConn) => {
 
         let response = {};
 
-        let cursor = await dbConn.verificationResultsCollection.find(dbQuery);
+        let cursor = await dbConn.verificationResultsCollection.find(dbQuery).sort({_id:-1});
         let entries = await cursor.toArray();
         
         if (entries.length == 0) {
@@ -92,7 +92,7 @@ module.exports.getVerificationStatusHandler = (dbConn) => {
             response['verificationError'] = result['verified'];
         }
 
-        cursor = await dbConn.parsingResultsCollection.find(dbQuery);
+        cursor = await dbConn.parsingResultsCollection.find(dbQuery).sort({_id:-1});
         entries = await cursor.toArray();
         
         if (entries.length == 0) {
