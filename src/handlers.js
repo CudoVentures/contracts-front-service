@@ -89,7 +89,7 @@ module.exports.getVerificationStatusHandler = (dbConn) => {
         }
 
         if ('verified' in result) {
-            response['verificationError'] = result['verified'];
+            response['verified'] = result['verified'];
         }
 
         cursor = await dbConn.parsingResultsCollection.find(dbQuery).sort({_id:-1});
