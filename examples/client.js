@@ -33,8 +33,8 @@ const verifyContract = async (crateName, optimizer, address, sourceCodeZIP) => {
         let interval = setInterval(async () => {
             const { data } = await axios.get(`${API_URL}/verification-status?id=${id}`);
 
-            if ((data['verified'] === true || (data['verificationError'] && data['verificationError'].length > 0)) 
-                && (data['parsed'] === true || (data['parsingError'] && data['parsingError'].length > 0))) {
+            if ((data['verificationError'] && data['verificationError'].length > 0) 
+                || data['parsed'] === true || (data['parsingError'] && data['parsingError'].length > 0)) {
                 console.log(data);
                 clearInterval(interval);
             }
