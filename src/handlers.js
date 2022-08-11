@@ -222,7 +222,7 @@ module.exports.getListContractSchemasHandler = (dbConn) => {
 module.exports.getDownloadSchemaHandler = (dbConn) => {
     return async (req, res) => {
         try {
-            let query = { address: req.query.address, parsed: true, funcName: req.query.type };
+            let query = { address: req.query.address, parsed: true };
 
             let results = await dbConn.parsingResultsCollection.find(query).sort({_id:-1});
             results = await results.toArray();
@@ -232,11 +232,17 @@ module.exports.getDownloadSchemaHandler = (dbConn) => {
                 return;
             }
 
-            const result = results[0];
-    
-            await downloadSchemaByID(result['_id'], res, (e) => {
-                errorResponse(res, 500, e);
-            });
+            for (let i = 0; i < results[0]['schemas'].length; i++) {
+                if (results[0]['schemas'][i]['funcName'] != req.query.type) {
+                    continue;
+                }
+
+                await downloadSchemaByID(results[0]['schemas'][i]['id'], res, (e) => {
+                    errorResponse(res, 500, e);
+                });
+                break;
+            }
+
         } catch (e) {
             console.error(`failed to get schema by id '${req.query.id}': ${e}`);
             errorResponse(res, 500, e);
