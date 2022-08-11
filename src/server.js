@@ -4,9 +4,7 @@ const multer = require('multer');
 
 const config = require('./config');
 const { connectDB } = require('./db');
-const { getVerifyContractHandler, getParseContractHandler, 
-        getListContractSchemasHandler, getReturnSchemaHandler,
-        getVerificationStatusHandler, getParsingStatusHandler, } = require('./handlers');
+const { getVerifyContractHandler, getDownloadSchemaHandler, getVerificationStatusHandler } = require('./handlers');
 
 
 config.verifyConfig();
@@ -26,12 +24,7 @@ connectDB('contracts_scan', 'sources', 'schemas', 'verification_results', 'parsi
 
     app.post('/verify-contract', multer(multerOptions).single('source'), getVerifyContractHandler(dbConn));
     app.get('/verification-status', getVerificationStatusHandler(dbConn));
-
-    // app.post('/parse-contract', multer(multerOptions).single('source'), getParseContractHandler(dbConn));
-    // app.get('/parsing-status', getParsingStatusHandler(dbConn));
-
-    app.get('/contract-schemas', getListContractSchemasHandler(dbConn));
-    app.get('/schema', getReturnSchemaHandler(dbConn));
+    app.get('/schema', getDownloadSchemaHandler(dbConn));
 
     console.info('connected to database');
 

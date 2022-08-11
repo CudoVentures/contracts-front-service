@@ -186,7 +186,7 @@ module.exports.getParsingStatusHandler = (dbConn) => {
 module.exports.getListContractSchemasHandler = (dbConn) => {
     return async (req, res) => {
         try {
-            let results = await dbConn.parsingResultsCollection.find({ address: req.query.address });
+            let results = await dbConn.parsingResultsCollection.find({ address: req.query.address }).sort({_id:-1});
             results = await results.toArray();
 
             if (!results) {
@@ -219,10 +219,22 @@ module.exports.getListContractSchemasHandler = (dbConn) => {
     }
 }
 
-module.exports.getReturnSchemaHandler = (_) => {
+module.exports.getDownloadSchemaHandler = (dbConn) => {
     return async (req, res) => {
         try {
-            await downloadSchemaByID(req.query.id, res, (e) => {
+            let query = { address: req.query.address, parsed: true, funcName: req.query.type };
+
+            let results = await dbConn.parsingResultsCollection.find(query).sort({_id:-1});
+            results = await results.toArray();
+
+            if (!results || results.length == 0) {
+                errorResponse(res, 400, `No scheme for address '${req.query.address}' with type '${req.query.type}' was found.`);
+                return;
+            }
+
+            const result = results[0];
+    
+            await downloadSchemaByID(result['_id'], res, (e) => {
                 errorResponse(res, 500, e);
             });
         } catch (e) {
