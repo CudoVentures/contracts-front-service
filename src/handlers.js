@@ -1,4 +1,4 @@
-const { storeSource, downloadSchemaByID } = require('./db');
+const { storeSource, downloadSchemaByID, downloadSourceByAddress } = require('./db');
 
 
 // TODO: Add request params validation
@@ -249,6 +249,22 @@ module.exports.getDownloadSchemaHandler = (dbConn) => {
         }
     }   
 }
+
+module.exports.getDownloadSourceHandler = () => {
+    return async (req, res) => {
+        try {
+            res.writeHead(200, { 'Content-Type': 'application/zip' });
+            await downloadSourceByAddress(req.query.address, res, (e) => {
+                errorResponse(res, 500, e);
+            });
+
+        } catch (e) {
+            console.error(`failed to get schema by id '${req.query.id}': ${e}`);
+            errorResponse(res, 500, e);
+        }
+    }   
+}
+
 
 const errorResponse = (res, code, err) => {
     res.statusCode = code;

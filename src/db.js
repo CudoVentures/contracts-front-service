@@ -30,7 +30,7 @@ module.exports.connectDB = async (dbName, sourcesBucketName, schemasBucketName, 
 module.exports.storeSource = async (buffer, metadata) => {
     // TODO: Maybe we will not have username but just API key
     // TODO: Generate filename in the format username-datetime
-    const uploadStream = sourcesBucket.openUploadStream('myFile', {
+    const uploadStream = sourcesBucket.openUploadStream('source', {
         metadata: metadata
     });
 
@@ -43,6 +43,13 @@ module.exports.storeSource = async (buffer, metadata) => {
 module.exports.downloadSchemaByID = async (schemaID, dest, errCallback) => {
     schemaID = new ObjectID(schemaID);
     const downloadStream = schemasBucket.openDownloadStream(schemaID);
+    downloadStream.on('error', errCallback);
+    downloadStream.pipe(dest);
+}
+
+module.exports.downloadSourceByAddress = async (sourceID, dest, errCallback) => {
+    sourceID = new ObjectID(sourceID);
+    const downloadStream = sourcesBucket.openDownloadStream(sourceID);
     downloadStream.on('error', errCallback);
     downloadStream.pipe(dest);
 }
