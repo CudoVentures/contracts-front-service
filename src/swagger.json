@@ -1,0 +1,193 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "version": "1.0.0",
+      "title": "Smart contracts verification",
+      "description": "Smart contracts verification API"
+    },
+    "host": "localhost:3333",
+    "basePath": "/",
+    "schemes": [
+      "http"
+    ],
+    "consumes": [
+      "multipart/form-data"
+    ],
+    "produces": [
+      "application/json",
+      "application/zip"
+    ],
+    "paths": {
+      "/verify-contract": {
+        "post": {
+          "description": "Store contract info for verification",
+          "parameters": [
+            {
+              "name": "crateName",
+              "in": "body",
+              "description": "Name of crate to be verified",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "optimizer",
+              "in": "body",
+              "description": "Optimizer used for compiling the deployed contract",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "address",
+              "in": "body",
+              "description": "Address of deployed contract",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "source",
+              "in": "formData",
+              "description": "Contract workspace source code zip",
+              "type": "file",
+              "required": true
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "201": {
+              "description": "Verification job id",
+              "schema": {
+                "$ref": "#/definitions/VerificationJobID"
+              }
+            }
+          }
+        } 
+      },
+      "/verification-status": {
+        "get": {
+            "description": "Get contract verification by job id or address",
+            "parameters": [
+              {
+                "name": "id",
+                "in": "query",
+                "description": "Job id for which to query status"
+              },
+              {
+                "name": "address",
+                "in": "query",
+                "description": "Address of contract for which to query status"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "schema": {
+                  "$ref": "#/definitions/VerificationStatus"
+                }
+              }
+            }
+          }
+      },
+      "/schema": {
+        "get": {
+            "description": "Get schema by address and type",
+            "parameters": [
+              {
+                "name": "type",
+                "in": "query",
+                "enum": ["query", "exec"],
+                "description": "Type of schema to get"
+              },
+              {
+                "name": "address",
+                "in": "query",
+                "description": "Address of contract for which to get schema"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "schema": {
+                  "$ref": "#/definitions/Schema"
+                }
+              }
+            }
+          }
+      },
+      "/source": {
+        "get": {
+            "description": "Get source code of contract by address",
+            "parameters": [
+              {
+                "name": "address",
+                "in": "query",
+                "description": "Address for which to download source code"
+              }
+            ],
+            "produces": [
+              "application/zip"
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "type": "file"
+              }
+            }
+          }
+      }
+    },
+    "definitions": {
+      "VerificationJobID": {
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        }
+      },
+      "VerificationStatus": {
+        "required": [
+          "verified",
+          "parsed"
+        ],
+        "properties": {
+          "verified": {
+            "type": "boolean"
+          },
+          "parsed": {
+            "type": "boolean"
+          },
+          "verificationError": {
+            "type": "string"
+          },
+          "parsingError": {
+            "type": "string"
+          }
+        }
+      },
+      "Schema": {
+        "required": [
+          "$schema",
+          "title",
+          "anyOf"
+        ],
+        "properties": {
+          "$schema": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "anyOf": {
+            "type": "array",
+            "items": {
+                "type": "object"
+            }
+          }
+        }
+      }     
+    }
+  }
