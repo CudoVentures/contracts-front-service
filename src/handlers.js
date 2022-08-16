@@ -228,7 +228,7 @@ module.exports.getDownloadSchemaHandler = (dbConn) => {
             results = await results.toArray();
 
             if (!results || results.length == 0) {
-                errorResponse(res, 400, `No scheme for address '${req.query.address}' with type '${req.query.type}' was found.`);
+                errorResponse(res, 404, `No scheme for address '${req.query.address}' with type '${req.query.type}' was found.`);
                 return;
             }
 
@@ -267,6 +267,7 @@ module.exports.getDownloadSourceHandler = () => {
 
 
 const errorResponse = (res, code, err) => {
+    console.error(err);
     res.statusCode = code;
     res.end(JSON.stringify({
         'error': err,

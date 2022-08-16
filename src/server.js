@@ -5,7 +5,8 @@ const multer = require('multer');
 const config = require('./config');
 const { connectDB } = require('./db');
 const { getVerifyContractHandler, getDownloadSchemaHandler, 
-        getVerificationStatusHandler, getDownloadSourceHandler } = require('./handlers');
+        getVerificationStatusHandler, getDownloadSourceHandler,
+    getParseContractHandler } = require('./handlers');
 
 const swaggerUi = require('swagger-ui-express'), swaggerDocument = require('./swagger.json');
 
